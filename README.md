@@ -1,23 +1,6 @@
 # Minimum Consistent DFA — project README
 
----
-
-## 1  Prerequisites
-
-| Requirement        | Tested version(s) | Notes                             |
-|--------------------|-------------------|-----------------------------------|
-| **g++**            | 11 / 12 / 13      | Must support C++17.               |
-| **Gecode** libs    | 6.4 or newer      | Install via distro packages or build from source. Required libs: `gecodeint`, `gecodesearch`, `gecodeminimodel`, `gecodekernel`, `gecodesupport`. |
-| **Python 3**       | 3.9 +             | Only for the helper script.       |
-
-> On Ubuntu / Debian:
-> ```bash
-> sudo apt install g++ libgecode-dev python3
-> ```
-
----
-
-## 2  Build instructions
+## 1  Build instructions
 
 1. **Enter the source directory**
    ```bash
@@ -32,7 +15,7 @@
 
 ---
 
-## 3  Running the solver on a single instance
+## 2  Running the solver on a single instance
 
 ```bash
 ./dfa < ../instances/filename.inp > ../out/filename.out
@@ -50,7 +33,7 @@ If the checker prints `OK` and `Plotting solution to file tmp.png`, the DFA is c
 
 ---
 
-## 4  Batch mode + diagrams (optional)
+## 3  Batch mode + diagrams (optional)
 
 `make_diagrams.py` automates the whole pipeline:
 
@@ -72,7 +55,7 @@ python3 make_diagrams.py
 
 ---
 
-## 5  Troubleshooting
+## 4  Troubleshooting
 
 | Symptom                               | Fix |
 |---------------------------------------|-----|
