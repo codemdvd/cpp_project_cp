@@ -8,17 +8,16 @@ import argparse
 import shutil
 
 SOLVER = pathlib.Path(__file__).with_name("dfa").resolve() 
-CHECKER = pathlib.Path(__file__).with_name("checker.exe").resolve() # или "./dfa_solver" на Linux
+CHECKER = pathlib.Path(__file__).with_name("checker.exe").resolve()
 INST_DIR  = pathlib.Path("instances")
 OUT_DIR   = pathlib.Path("out")
 DIAG_DIR  = pathlib.Path("diagram")
-TIME_LIM  = 60   # сек
+TIME_LIM  = 60
 
 def already_solved(out_file: pathlib.Path) -> bool:
     return out_file.exists() and out_file.stat().st_size > 0
 
 def run_solver(inp: pathlib.Path, out: pathlib.Path) -> str:
-    """Запускает solver, возвращает 'DONE', 'TIMEOUT' или 'ERROR(...)'."""
     try:
         with inp.open("rb") as fin, out.open("wb") as fout:
             subprocess.run(
@@ -35,13 +34,6 @@ def run_solver(inp: pathlib.Path, out: pathlib.Path) -> str:
         return f"ERROR(exit={e.returncode})"
 
 def run_checker_and_move_diagram(out: pathlib.Path) -> str:
-    """
-    Запускает checker.exe, парсит его stdout:
-      - первая строка: OK / NO GOOD / ...
-      - вторая (по умолчанию): 'Plotting solution to file tmp.png'
-    Если вторая строка есть, берём имя файла, и перемещаем его
-    в diagram/<out.stem>.png
-    """
     try:
         p = subprocess.run(
             [str(CHECKER)],
@@ -53,9 +45,7 @@ def run_checker_and_move_diagram(out: pathlib.Path) -> str:
         if not text:
             return "CHK_NO_OUTPUT"
         status = text[0].strip()
-        # Если checker сообщил, что нарисовал картинку:
         if len(text) >= 2 and "Plotting solution to file" in text[1]:
-            # вторая строка обычно: Plotting solution to file tmp.png
             fname = text[1].split()[-1]
             src = pathlib.Path(fname)
             if src.exists():
@@ -71,7 +61,7 @@ def run_checker_and_move_diagram(out: pathlib.Path) -> str:
 def main(argv=None):
     p = argparse.ArgumentParser(description="Batch run solver + checker + diagrams")
     p.add_argument("--force", action="store_true",
-                   help="пересчитывать даже уже решённые .out")
+                   help="try again .out")
     args = p.parse_args(argv)
 
     if not SOLVER.exists():
@@ -124,7 +114,6 @@ def main(argv=None):
         else:
             stats["checked_err"] += 1
 
-    # Финальная статистика
     print("\n=== Summary ===")
     print(f"Instances total : {stats['total_inp']}")
     print(f"  Skipped        : {stats['skipped']}")
