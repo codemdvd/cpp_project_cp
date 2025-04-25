@@ -1,4 +1,4 @@
-# Minimum Consistent DFA — project README
+# Constraint Programming — project README
 
 ## 1  Build instructions
 
