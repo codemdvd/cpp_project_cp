@@ -1,8 +1,3 @@
-//====================================================================
-//  Minimum Consistent DFA – Gecode version (fixed index bug)
-//  Uses only Gecode (int.hh, minimodel.hh, search.hh).
-//  Correctly handles separate offsets for acc / rej words.
-//====================================================================
 #include <iostream>
 #include <vector>
 #include <cstddef>
@@ -13,7 +8,7 @@
 #include <gecode/search.hh>
 using namespace Gecode;
 
-//--------------------------------------------------------------------
+
 struct Sample { std::vector<std::vector<int>> acc, rej; };
 
 static std::vector<std::vector<int>> read_block(std::istream& in) {
@@ -28,23 +23,20 @@ static std::vector<std::vector<int>> read_block(std::istream& in) {
 static Sample read_instance(std::istream& in) {
     Sample s; s.acc = read_block(in); s.rej = read_block(in); return s; }
 
-//--------------------------------------------------------------------
-// upper bound on states = |prefixes| + 1
-//--------------------------------------------------------------------
+
 static int upper_bound_states(const Sample& M){
     std::set<std::vector<int>> pref; auto add=[&](const auto& V){
         for(const auto& w:V){ std::vector<int> p; pref.insert(p);
             for(int b:w){ p.push_back(b); pref.insert(p);} }
     }; add(M.acc); add(M.rej); return (int)pref.size(); }
 
-//--------------------------------------------------------------------
+
 class DFAspace: public Space{
 public:
     IntVarArray T0,T1; BoolVarArray A; IntVarArray S;
 
     DFAspace(const Sample& M,int N):
         T0(*this,N,0,N-1),T1(*this,N,0,N-1),A(*this,N,0,1){
-        // collect words with offsets
         struct Word{std::size_t off,len; const std::vector<int>* w; bool mustAcc;};
         std::vector<Word> words; std::size_t total=0;
         auto collect=[&](const std::vector<std::vector<int>>& V,bool acc){
@@ -53,10 +45,9 @@ public:
         collect(M.acc,true); collect(M.rej,false);
         S = IntVarArray(*this,total,0,N-1);
 
-        // constraints for each word
         for(const Word& wd: words){
             std::size_t o=wd.off,L=wd.len; const auto& w=*wd.w;
-            rel(*this,S[o]==0);                     // start state
+            rel(*this,S[o]==0);
             for(std::size_t j=0;j<L;++j){
                 const IntVar& cur=S[o+j]; const IntVar& nxt=S[o+j+1];
                 element(*this, (w[j]?T1:T0), cur, nxt);
@@ -65,9 +56,7 @@ public:
             element(*this,A,S[o+L],accLast);
             rel(*this, accLast == (wd.mustAcc?1:0));
         }
-        // symmetry: first‑occurrence order
         IntArgs ord(N); for(int q=0;q<N;++q) ord[q]=q; precede(*this,S,ord);
-        // branching
         branch(*this,S ,INT_VAR_SIZE_MIN(),INT_VAL_MIN());
         branch(*this,T0,INT_VAR_NONE()   ,INT_VAL_MIN());
         branch(*this,T1,INT_VAR_NONE()   ,INT_VAL_MIN());
@@ -78,7 +67,6 @@ public:
         A.update(*this,s.A); S.update(*this,s.S);} Space* copy(void) override
         {return new DFAspace(*this);} };
 
-//--------------------------------------------------------------------
 int main(){ std::ios::sync_with_stdio(false); std::cin.tie(nullptr);
     const Sample inst=read_instance(std::cin);
     if(inst.acc.empty()&&inst.rej.empty()) return 0;
@@ -87,12 +75,10 @@ int main(){ std::ios::sync_with_stdio(false); std::cin.tie(nullptr);
         DFAspace* root=new DFAspace(inst,N);
         DFS<DFAspace> dfs(root); delete root;
         if(DFAspace* sol=dfs.next()){
-            // echo instance
             std::cout<<inst.acc.size()<<'\n';
             for(const auto& w:inst.acc){ std::cout<<w.size(); for(int b:w) std::cout<<' '<<b; std::cout<<'\n'; }
             std::cout<<inst.rej.size()<<'\n';
             for(const auto& w:inst.rej){ std::cout<<w.size(); for(int b:w) std::cout<<' '<<b; std::cout<<'\n'; }
-            // DFA
             std::cout<<N<<'\n';
             for(int q=0;q<N;++q)
                 std::cout<<sol->T0[q].val()<<' '<<sol->T1[q].val()<<' '<<sol->A[q].val()<<'\n';

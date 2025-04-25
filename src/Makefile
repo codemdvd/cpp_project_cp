@@ -1,6 +1,3 @@
-# --------------------------------------------------------------
-#  Build rules for the Gecode-based DFA solver
-# --------------------------------------------------------------
 CXX      := g++
 CXXFLAGS := -std=c++17 -O2 -Wall -Wextra -pedantic
 LDLIBS   := -lgecodeint -lgecodesearch -lgecodeminimodel \
