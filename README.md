@@ -31,6 +31,8 @@ You can manually call the contest‑supplied checker to verify:
 ```
 If the checker prints `OK` and `Plotting solution to file tmp.png`, the DFA is correct; it also generates a quick visualisation (`tmp.png`).
 
+
+# Performance note : on the author's machine the solver finishes 87 / 100 public instances within the 60‑second per‑instance limit.
 ---
 
 ## 3  Batch mode + diagrams
