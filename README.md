@@ -33,25 +33,17 @@ If the checker prints `OK` and `Plotting solution to file tmp.png`, the DFA is c
 
 ---
 
-## 3  Batch mode + diagrams (optional)
+## 3  Batch mode + diagrams
 
-`make_diagrams.py` automates the whole pipeline:
+in src library you can also find a file batch_runner.py 
 
 ```bash
-python3 make_diagrams.py \
-       --checker ../checker.exe \
-       --out ../out \
-       --dst ../diagrams
+python3 batch_runner.py
 ```
 
 1. **Iterates** over every `*.inp` in `../instances/`, runs `dfa`, saves answers into `../out/`.
 2. **Checks** each answer with `checker.exe`, prints `OK / NO  GOOD / ERROR …` to the terminal.
 3. **Moves** generated `tmp.png` into `../diagrams/<instance>.png` so they never overwrite each other.
-
-Default arguments match the folder names above, so the short form is usually enough:
-```bash
-python3 make_diagrams.py
-```
 
 ---
 
