@@ -29,8 +29,6 @@ You can manually call the contest‑supplied checker to verify:
 ```bash
 ./checker.exe < ../out/filename.out
 ```
-If the checker prints `OK` and `Plotting solution to file tmp.png`, the DFA is correct; it also generates a quick visualisation (`tmp.png`).
-
 
 #### Performance note : on my machine the solver finishes 87 / 100 instances within the 60‑second per‑instance limit.
 ---
