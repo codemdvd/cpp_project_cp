@@ -47,15 +47,3 @@ python3 batch_runner.py
 
 ---
 
-## 4  Troubleshooting
-
-| Symptom                               | Fix |
-|---------------------------------------|-----|
-| `make` fails with *gecode… not found* | Verify that libgecode‑dev (or self‑built Gecode) is installed and headers are in compiler’s include path. |
-| `./dfa` silently produces **empty** `.out` | The search did not find a DFA within the 60 s internal timeout → try a faster machine or check if instance files violate format (same word in both sets). |
-| `checker.exe: No such file or directory` | Place the official checker binary in the project root or pass `--checker /path/to/checker.exe` to the Python script. |
-
----
-
-**Enjoy solving automata puzzles!**
-
